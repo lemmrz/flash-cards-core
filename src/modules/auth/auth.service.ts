@@ -4,7 +4,7 @@ import * as bcrypt from 'bcrypt';
 import { JwtPayload, JwtResponse } from './auth.constants';
 import { UserService } from '../user/user.service';
 import { PrismaService } from 'prisma/prisma.service';
-import { Prisma, User } from 'generated/prisma';
+import { Prisma, User } from '@prisma/client'
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { ConfigService } from '@nestjs/config';
 import { envVars } from 'src/common/constants/env-variables.mapping';
