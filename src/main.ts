@@ -3,9 +3,14 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
+import { MinioService } from './modules/minio/minio.service';
+import { cardsBucketName } from './modules/card/card.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  const minioService = app.get(MinioService);
+  await minioService.createBucketIfNotExists(cardsBucketName, true);
 
   // Enable validation globally
   app.useGlobalPipes(
