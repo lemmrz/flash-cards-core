@@ -54,6 +54,17 @@ npm run migrate:dev
 npm run start:dev
 ```
 
+### Optional: Run the seeder to populate the database with fake data. The data will be correctly formatted but may not make sense semantically, as it is generated using faker-js.
+```bash
+# from the project root
+npm run seed
+```
+
+```bash
+# from the project root
+npm run start:dev
+```
+
 ## Useful Links / Ports
 
 | Service              | URL                              | Notes                  |
