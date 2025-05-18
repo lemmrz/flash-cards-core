@@ -12,14 +12,19 @@ async function bootstrap() {
   const minioService = app.get(MinioService);
   await minioService.createBucketIfNotExists(cardsBucketName, true);
 
-  // Enable validation globally
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true, // strips unknown properties
-      forbidNonWhitelisted: true, // throws an error if unknown properties exist
-      transform: true, // automatically transforms payloads to DTO classes
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
     }),
   );
+
+  app.enableCors({
+    origin: ['http://localhost:3000'],
+    credentials: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  });
 
   const httpAdapterHost = app.get(HttpAdapterHost);
   app.useGlobalFilters(new AllExceptionsFilter(httpAdapterHost));
