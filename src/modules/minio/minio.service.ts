@@ -6,6 +6,7 @@ import {
   CreateBucketCommand,
   HeadBucketCommand,
   PutBucketPolicyCommand,
+  HeadObjectCommand,
 } from '@aws-sdk/client-s3';
 import { ConfigService } from '@nestjs/config';
 import { envVars } from 'src/common/constants/env-variables.mapping';
@@ -75,6 +76,40 @@ export class MinioService {
     } else {
       this.logger.log(`Bucket "${bucket}" already exists`);
     }
+  }
+
+   /** Replace (or create) swagger.json in the given bucket/key */
+   async uploadSwaggerJson(
+    bucket: string,
+    key: string,
+    buffer: Buffer,
+  ): Promise<string> {
+    // 1. remove old object if it exists
+    try {
+      await this.s3Client.send(
+        new HeadObjectCommand({ Bucket: bucket, Key: key }),
+      );
+      await this.s3Client.send(
+        new DeleteObjectCommand({ Bucket: bucket, Key: key }),
+      );
+    } catch {
+      /* object didn’t exist – ignore */
+    }
+
+    // 2. put the new file
+    await this.s3Client.send(
+      new PutObjectCommand({
+        Bucket: bucket,
+        Key: key,
+        Body: buffer,
+        ContentType: 'application/json',
+      }),
+    );
+
+    // 3. return a public-ish URL (adjust for your endpoint)
+    const url = new URL(`${bucket}/${key}`, this.endpoint).toString();
+    this.logger.log(url);
+    return url;
   }
 
   async uploadFile(

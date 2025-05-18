@@ -1,0 +1,1241 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/card": {
+      "post": {
+        "operationId": "CardController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "Payload to create a card",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCardDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Card created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CardResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "accessToken": []
+          }
+        ],
+        "summary": "Create a new card",
+        "tags": [
+          "cards"
+        ]
+      }
+    },
+    "/card/deck/{deckId}": {
+      "get": {
+        "operationId": "CardController_findAll",
+        "parameters": [
+          {
+            "name": "deckId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CardResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "accessToken": []
+          }
+        ],
+        "summary": "Get all cards in a deck (owned by user)",
+        "tags": [
+          "cards"
+        ]
+      }
+    },
+    "/card/{id}": {
+      "get": {
+        "operationId": "CardController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CardResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Card not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "accessToken": []
+          }
+        ],
+        "summary": "Get a card by ID",
+        "tags": [
+          "cards"
+        ]
+      },
+      "patch": {
+        "operationId": "CardController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCardDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CardResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Card not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "accessToken": []
+          }
+        ],
+        "summary": "Update a card",
+        "tags": [
+          "cards"
+        ]
+      },
+      "delete": {
+        "operationId": "CardController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CardResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Card not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "accessToken": []
+          }
+        ],
+        "summary": "Delete a card",
+        "tags": [
+          "cards"
+        ]
+      }
+    },
+    "/card/upload-image/{id}": {
+      "post": {
+        "operationId": "CardController_uploadImage",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Image file to upload"
+                  }
+                },
+                "required": [
+                  "file"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Image uploaded successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "imageUrl": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "accessToken": []
+          }
+        ],
+        "summary": "Upload image for card. If current card already has a saved image - previously added picture would be removed. 1 card - 1 image",
+        "tags": [
+          "cards"
+        ]
+      }
+    },
+    "/subject": {
+      "post": {
+        "operationId": "SubjectController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "Payload to create a new subject",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSubjectDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Subject successfully created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubjectResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "accessToken": []
+          }
+        ],
+        "summary": "Create a new subject",
+        "tags": [
+          "subjects"
+        ]
+      },
+      "get": {
+        "operationId": "SubjectController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of subjects retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubjectResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "accessToken": []
+          }
+        ],
+        "summary": "Get all subjects for the authenticated user",
+        "tags": [
+          "subjects"
+        ]
+      }
+    },
+    "/subject/{id}": {
+      "get": {
+        "operationId": "SubjectController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Subject retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubjectResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Subject not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "accessToken": []
+          }
+        ],
+        "summary": "Get a specific subject by ID",
+        "tags": [
+          "subjects"
+        ]
+      },
+      "patch": {
+        "operationId": "SubjectController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Payload to update a subject",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSubjectDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Subject updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubjectResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Subject not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "accessToken": []
+          }
+        ],
+        "summary": "Update a specific subject by ID",
+        "tags": [
+          "subjects"
+        ]
+      },
+      "delete": {
+        "operationId": "SubjectController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Subject deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubjectResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Subject not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "accessToken": []
+          }
+        ],
+        "summary": "Delete a specific subject by ID",
+        "tags": [
+          "subjects"
+        ]
+      }
+    },
+    "/deck": {
+      "post": {
+        "operationId": "DeckController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "Payload to create a new deck",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDeckDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Deck successfully created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeckResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "accessToken": []
+          }
+        ],
+        "summary": "Create a new deck",
+        "tags": [
+          "decks"
+        ]
+      },
+      "get": {
+        "operationId": "DeckController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of decks retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DeckResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "accessToken": []
+          }
+        ],
+        "summary": "Get all decks for the authenticated user",
+        "tags": [
+          "decks"
+        ]
+      }
+    },
+    "/deck/subject/{subjectId}": {
+      "get": {
+        "operationId": "DeckController_findBySubject",
+        "parameters": [
+          {
+            "name": "subjectId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Decks filtered by subject retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DeckResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "accessToken": []
+          }
+        ],
+        "summary": "Get decks by subject ID for the authenticated user",
+        "tags": [
+          "decks"
+        ]
+      }
+    },
+    "/deck/{id}": {
+      "get": {
+        "operationId": "DeckController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deck retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeckResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Deck not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "accessToken": []
+          }
+        ],
+        "summary": "Get a specific deck by ID",
+        "tags": [
+          "decks"
+        ]
+      },
+      "patch": {
+        "operationId": "DeckController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Payload to update a deck",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateDeckDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Deck updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeckResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Deck not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "accessToken": []
+          }
+        ],
+        "summary": "Update a specific deck by ID",
+        "tags": [
+          "decks"
+        ]
+      },
+      "delete": {
+        "operationId": "DeckController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deck deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeckResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Deck not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "accessToken": []
+          }
+        ],
+        "summary": "Delete a specific deck by ID",
+        "tags": [
+          "decks"
+        ]
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "operationId": "AuthController_register",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "User registration payload",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User successfully registered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data"
+          }
+        },
+        "summary": "Register a new user",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "operationId": "AuthController_login",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "User login payload",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User successfully logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JwtResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        },
+        "summary": "Log in a user",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "operationId": "AuthController_refresh",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "Refresh token payload",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Access token refreshed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JwtResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Invalid or expired refresh token"
+          }
+        },
+        "security": [
+          {
+            "accessToken": []
+          }
+        ],
+        "summary": "Refresh access token",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "operationId": "AuthController_logout",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "User successfully logged out"
+          }
+        },
+        "security": [
+          {
+            "accessToken": []
+          }
+        ],
+        "summary": "Log out a user",
+        "tags": [
+          "auth"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Flash Cards API",
+    "description": "API documentation for the Flash Cards application",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "accessToken": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      }
+    },
+    "schemas": {
+      "CreateCardDto": {
+        "type": "object",
+        "properties": {
+          "question": {
+            "type": "string",
+            "example": "What is 7 × 8?",
+            "description": "Front side / question text of the flash-card"
+          },
+          "answer": {
+            "type": "string",
+            "example": "56",
+            "description": "Back side / answer text of the flash-card"
+          },
+          "deckId": {
+            "type": "number",
+            "example": 12,
+            "description": "ID of the deck this card belongs to"
+          }
+        },
+        "required": [
+          "question",
+          "answer",
+          "deckId"
+        ]
+      },
+      "CardResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 17,
+            "description": "Unique identifier of the card"
+          },
+          "question": {
+            "type": "string",
+            "example": "What is 7 × 8?",
+            "description": "Question text"
+          },
+          "answer": {
+            "type": "string",
+            "example": "56",
+            "description": "Answer text"
+          },
+          "deckId": {
+            "type": "number",
+            "example": 12,
+            "description": "Deck ID"
+          },
+          "ownerId": {
+            "type": "number",
+            "example": 3,
+            "description": "Owner (user) ID"
+          },
+          "imgUrl": {
+            "type": "object",
+            "example": "http:localhost/cards/card-images/42-1715940100000-math.png",
+            "description": "Public URL of the card image (null if no image uploaded)"
+          }
+        },
+        "required": [
+          "id",
+          "question",
+          "answer",
+          "deckId",
+          "ownerId"
+        ]
+      },
+      "UpdateCardDto": {
+        "type": "object",
+        "properties": {
+          "question": {
+            "type": "string",
+            "example": "What is 9 × 6?",
+            "description": "Updated question text"
+          },
+          "answer": {
+            "type": "string",
+            "example": "54",
+            "description": "Updated answer text"
+          },
+          "deckId": {
+            "type": "number",
+            "example": 12,
+            "description": "Deck ID"
+          }
+        }
+      },
+      "CreateSubjectDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Math",
+            "description": "The name of the subject"
+          },
+          "description": {
+            "type": "string",
+            "example": "A subject about numbers and equations",
+            "description": "The description of the subject"
+          }
+        },
+        "required": [
+          "name",
+          "description"
+        ]
+      },
+      "SubjectResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 1,
+            "description": "The unique ID of the subject"
+          },
+          "name": {
+            "type": "string",
+            "example": "Mathematics",
+            "description": "The name of the subject"
+          },
+          "description": {
+            "type": "object",
+            "example": "A subject about numbers and equations",
+            "description": "The description of the subject"
+          },
+          "ownerId": {
+            "type": "number",
+            "example": 42,
+            "description": "The ID of the user who owns the subject"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "ownerId"
+        ]
+      },
+      "UpdateSubjectDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Updated Math",
+            "description": "The updated name of the subject"
+          },
+          "description": {
+            "type": "string",
+            "example": "Advanced topics in algebra and geometry",
+            "description": "An optional updated description of the subject"
+          }
+        }
+      },
+      "CreateDeckDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Biology Basics",
+            "description": "The name of the deck"
+          },
+          "subjectId": {
+            "type": "number",
+            "example": 1,
+            "description": "Relation to subjects table"
+          },
+          "description": {
+            "type": "string",
+            "example": "Covers cell structures and DNA fundamentals",
+            "description": "An optional description of the deck"
+          }
+        },
+        "required": [
+          "name",
+          "subjectId"
+        ]
+      },
+      "DeckResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 42,
+            "description": "Unique identifier of the deck"
+          },
+          "name": {
+            "type": "string",
+            "example": "Math Basics",
+            "description": "The name of the deck"
+          },
+          "ownerId": {
+            "type": "number",
+            "example": 7,
+            "description": "Identifier of the user that owns this deck"
+          },
+          "description": {
+            "type": "object",
+            "example": "Covers math fundamentals",
+            "description": "Optional description of the deck"
+          },
+          "subject": {
+            "description": "The subject this deck belongs to",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SubjectResponse"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "ownerId",
+          "subject"
+        ]
+      },
+      "UpdateDeckDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Updated Biology Basics",
+            "description": "Updated name of the deck"
+          },
+          "description": {
+            "type": "string",
+            "example": "Updated description about cell biology and genetics",
+            "description": "Updated description of the deck"
+          }
+        }
+      },
+      "CreateUserDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "John Doe",
+            "description": "The name of the user",
+            "maxLength": 48
+          },
+          "email": {
+            "type": "string",
+            "example": "user@example.com",
+            "description": "The email of the user",
+            "maxLength": 256
+          },
+          "password": {
+            "type": "string",
+            "example": "password123",
+            "description": "The password of the user",
+            "minLength": 6,
+            "maxLength": 32
+          }
+        },
+        "required": [
+          "name",
+          "email",
+          "password"
+        ]
+      },
+      "UserResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 1,
+            "description": "Unique identifier of the user"
+          },
+          "name": {
+            "type": "string",
+            "example": "John Doe",
+            "description": "Full name of the user"
+          },
+          "email": {
+            "type": "string",
+            "example": "john@example.com",
+            "description": "Email address of the user"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "email"
+        ]
+      },
+      "LoginDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "user@example.com",
+            "description": "The email of the user",
+            "maxLength": 64
+          },
+          "password": {
+            "type": "string",
+            "example": "password123",
+            "description": "The password of the user",
+            "maxLength": 32,
+            "minLength": 4
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "JwtResponse": {
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+            "description": "Short-lived token used to authenticate API requests"
+          },
+          "refreshToken": {
+            "type": "string",
+            "example": "dGhpc0lzQVNlcmlhbGl6ZWRMb25nZXJTZXRTdHJpbmc...",
+            "description": "Long-lived token used to obtain new access tokens"
+          }
+        },
+        "required": [
+          "accessToken",
+          "refreshToken"
+        ]
+      },
+      "RefreshDto": {
+        "type": "object",
+        "properties": {
+          "refreshToken": {
+            "type": "string",
+            "example": "your-refresh-token",
+            "description": "The refresh token used to obtain a new access token"
+          }
+        },
+        "required": [
+          "refreshToken"
+        ]
+      }
+    }
+  }
+}

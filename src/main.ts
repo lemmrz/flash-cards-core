@@ -1,16 +1,18 @@
-import { HttpAdapterHost, NestFactory } from '@nestjs/core';
+import { NestFactory, HttpAdapterHost } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
+import { writeFileSync } from 'fs';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { ValidationPipe } from '@nestjs/common';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { MinioService } from './modules/minio/minio.service';
 import { cardsBucketName } from './modules/card/card.service';
 
+const swaggerBucket = 'swagger-bucket';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const minioService = app.get(MinioService);
-  await minioService.createBucketIfNotExists(cardsBucketName, true);
+  await Promise.all([minioService.createBucketIfNotExists(swaggerBucket, true), minioService.createBucketIfNotExists(cardsBucketName, true)])
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -29,7 +31,7 @@ async function bootstrap() {
   const httpAdapterHost = app.get(HttpAdapterHost);
   app.useGlobalFilters(new AllExceptionsFilter(httpAdapterHost));
 
-  const config = new DocumentBuilder()
+  const swaggerCfg = new DocumentBuilder()
     .setTitle('Flash Cards API')
     .setDescription('API documentation for the Flash Cards application')
     .setVersion('1.0')
@@ -38,14 +40,25 @@ async function bootstrap() {
         type: 'http',
         scheme: 'bearer',
         bearerFormat: 'JWT',
-        name: 'Authorization',
-        in: 'header',
       },
       'accessToken',
     )
     .build();
-  const document = SwaggerModule.createDocument(app, config);
+
+  const document = SwaggerModule.createDocument(app, swaggerCfg);
   SwaggerModule.setup('api', app, document);
+
+  const buffer = Buffer.from(JSON.stringify(document, null, 2), 'utf-8');
+
+  await minioService.uploadSwaggerJson(
+    swaggerBucket,
+    'swagger/swagger.json',
+    buffer,
+  );
+
+  writeFileSync('swagger.json', buffer);
+
   await app.listen(process.env.PORT ?? 42069);
 }
+
 bootstrap();
